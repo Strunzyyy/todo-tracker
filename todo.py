@@ -33,4 +33,25 @@ def erledigt(todos, index):
 
 if __name__ == "__main__":
     todos = laden()
-    anzeigen(todos)
+    while True:
+        print("\n--- TODO MENÜ ---")
+        print("1) Aufgabe hinzufügen")
+        print("2) Alle anzeigen")
+        print("3) Aufgabe erledigen")
+        print("4) Beenden")
+        wahl = input("Deine Wahl: ")
+
+        if wahl == "1":
+            text = input("Aufgabe: ")
+            hinzufuegen(todos, text)
+        elif wahl == "2":
+            anzeigen(todos)
+        elif wahl == "3":
+            anzeigen(todos)
+            index = int(input("Nummer der erledigten Aufgabe: "))
+            erledigt(todos, index)
+        elif wahl == "4":
+            print("Tschüss!")
+            break
+        else:
+            print("Ungültige Wahl, bitte 1-4.")
