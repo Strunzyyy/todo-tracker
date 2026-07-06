@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print("\n--- TODO MENÜ ---")
         print("1) Aufgabe hinzufügen")
         print("2) Alle anzeigen")
-        print("3) Aufgabe erledigen")
+        print("3) Als erledigt markieren")
         print("4) Beenden")
         wahl = input("Deine Wahl: ")
 
@@ -54,4 +54,4 @@ if __name__ == "__main__":
             print("Tschüss!")
             break
         else:
-            print("Ungültige Wahl, bitte 1-4.")
+            print("Ungültige Wahl, bitte 1-4 eingeben.")
