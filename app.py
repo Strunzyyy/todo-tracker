@@ -1,16 +1,70 @@
-from flask import Flask
-from todo import laden
+from flask import Flask, request, redirect
+import json
+import os
 
+DATEI = "todos.json"
 app = Flask(__name__)
 
+def laden():
+    if os.path.exists(DATEI):
+        with open(DATEI, "r") as f:
+            return json.load(f)
+    return []
+
+def speichern(todos):
+    with open(DATEI, "w") as f:
+        json.dump(todos, f, indent=2)
+
 @app.route("/")
-def startseite():
+def index():
     todos = laden()
-    ergebnis = "<h1>Meine Aufgaben</h1>"
-    for t in todos:
-        status = "✓" if t["erledigt"] else "✗"
-        ergebnis += f"<p>[{status}] {t['text']}</p>"
-    return ergebnis
+    html = """
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; background: #f4f4f4; }
+        h1 { color: #333; }
+        .todo { background: white; padding: 12px; margin: 8px 0; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .erledigt { text-decoration: line-through; color: #999; }
+        a { text-decoration: none; margin-left: 10px; font-size: 14px; }
+        .btn-done { color: green; }
+        .btn-del { color: red; }
+        form { margin-top: 20px; display: flex; gap: 8px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+    <h1>Meine Todos</h1>
+    """
+    for i, t in enumerate(todos):
+        css_klasse = "erledigt" if t["erledigt"] else ""
+        html += f'<div class="todo"><span class="{css_klasse}">{t["text"]}</span><span>'
+        html += f'<a class="btn-done" href="/done/{i}">✓ erledigt</a>'
+        html += f'<a class="btn-del" href="/delete/{i}">✗ löschen</a>'
+        html += '</span></div>'
+    html += '<form method="post" action="/add"><input name="text" placeholder="Neue Aufgabe..."><button>Hinzufügen</button></form>'
+    return html
+
+@app.route("/add", methods=["POST"])
+def add():
+    todos = laden()
+    text = request.form["text"]
+    todos.append({"text": text, "erledigt": False})
+    speichern(todos)
+    return redirect("/")
+
+@app.route("/done/<int:index>")
+def done(index):
+    todos = laden()
+    if 0 <= index < len(todos):
+        todos[index]["erledigt"] = True
+        speichern(todos)
+    return redirect("/")
+
+@app.route("/delete/<int:index>")
+def delete(index):
+    todos = laden()
+    if 0 <= index < len(todos):
+        todos.pop(index)
+        speichern(todos)
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
