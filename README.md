@@ -1,36 +1,48 @@
-\# Todo Checklist (Kleinigkeiten im Haushalt etc.)
+# Daily Tracker Dashboard
 
+Ein persönliches Dashboard, um meinen Alltag und meine bisherigen 
+"Paper-Checklisten" digital zu erfassen und abzuhaken.
 
+## Ziel des Projekts
 
-A simple CLI-based task manager built in Python.
+Statt handschriftlicher Listen möchte ich meine wiederkehrenden 
+Tagesaufgaben zentral an einem Ort tracken – per Klick, übersichtlich 
+und auswertbar :)
 
+## Was ich gerne (täglich) tracken möchte
 
+**Gesundheit & Ernährung**
+- Nährstoffe: Zink, Magnesium, Ashwagandha, Schwarzkümmelöl, Vitamin D3/K2
+- Kiwi & Paranusskerne
+- Kefir, Kaffee, 400g Gemüse
+- Mittagessen gekocht & für den nächsten Arbeitstag eingepackt
+- Ernährung in Yazio getrackt (Ziel: ~1.800 kcal – 222g Carbs, 111g Protein, 49g Fett)
 
-\## Features
+**Training**
+- Krafttraining
+- VO2-Max-Training (40 min Rad, je dreimal pro Woche)
 
-\- Add tasks
+**Produktivität & Routine**
+- 1h AP1-Lernen
+- 30 min Lesen am Abend
+- Arbeitszeiterfassung im ESS
+- Finance-Aufgaben (für meinen Vater) erledigen, wenn welche anstehen
+- Zimmer & Bett sauber und ordentlich halten
 
-\- View all tasks
+**Sonstiges**
+- Katze gefüttert
 
-\- Mark tasks as done
+## Motivation
 
-\- Data saved locally in JSON
+Ein bewusst kleines Projekt – nicht zwingend notwendig, aber ein guter 
+Weg, um meine Routinen sichtbar zu machen - in erster Linie aber nur ein LERN-Projekt.
 
+## Tech-Stack
 
-
-\## How to run
-
-```bash
-
-python todo.py
-
-```
-
-
-
-\## Tech Stack
-
-\- Python 3
-
-\- JSON for local storage
-
+- Python
+- Flask
+- JSON (Datenspeicherung)
+- HTML / CSS (Frontend)
+- Jinja2 (Templates)
+- SQLite (Datenbank)
+- JavaScript (Interaktivität)
