@@ -18,5 +18,13 @@
   {
     "text": "Yazio?",
     "erledigt": true
+  },
+  {
+    "text": "eBay Pakete mitbringen am Freitag",
+    "erledigt": false
+  },
+  {
+    "text": "Yazio nachtragen",
+    "erledigt": false
   }
 ]
