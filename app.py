@@ -1,23 +1,31 @@
 from flask import Flask, request, redirect
-import json
-import os
+import sqlite3
 
-DATEI = "todos.json"
 app = Flask(__name__)
 
-def laden():
-    if os.path.exists(DATEI):
-        with open(DATEI, "r") as f:
-            return json.load(f)
-    return []
+def get_connection():
+    return sqlite3.connect("todos.db")
 
-def speichern(todos):
-    with open(DATEI, "w") as f:
-        json.dump(todos, f, indent=2)
+def init_db():
+    conn = get_connection()
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS todos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        text TEXT NOT NULL,
+        erledigt INTEGER DEFAULT 0
+    )
+    """)
+    conn.commit()
+    conn.close()
 
 @app.route("/")
 def index():
-    todos = laden()
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, text, erledigt FROM todos")
+    todos = cursor.fetchall()
+    conn.close()
+
     html = """
     <style>
         body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; background: #f4f4f4; }
@@ -33,38 +41,40 @@ def index():
     </style>
     <h1>Meine Todos</h1>
     """
-    for i, t in enumerate(todos):
-        css_klasse = "erledigt" if t["erledigt"] else ""
-        html += f'<div class="todo"><span class="{css_klasse}">{t["text"]}</span><span>'
-        html += f'<a class="btn-done" href="/done/{i}">✓ erledigt</a>'
-        html += f'<a class="btn-del" href="/delete/{i}">✗ löschen</a>'
+    for todo_id, text, erledigt in todos:
+        css_klasse = "erledigt" if erledigt else ""
+        html += f'<div class="todo"><span class="{css_klasse}">{text}</span><span>'
+        html += f'<a class="btn-done" href="/done/{todo_id}">✓ erledigt</a>'
+        html += f'<a class="btn-del" href="/delete/{todo_id}">✗ löschen</a>'
         html += '</span></div>'
     html += '<form method="post" action="/add"><input name="text" placeholder="Neue Aufgabe..."><button>Hinzufügen</button></form>'
     return html
 
 @app.route("/add", methods=["POST"])
 def add():
-    todos = laden()
     text = request.form["text"]
-    todos.append({"text": text, "erledigt": False})
-    speichern(todos)
+    conn = get_connection()
+    conn.execute("INSERT INTO todos (text) VALUES (?)", (text,))
+    conn.commit()
+    conn.close()
     return redirect("/")
 
-@app.route("/done/<int:index>")
-def done(index):
-    todos = laden()
-    if 0 <= index < len(todos):
-        todos[index]["erledigt"] = True
-        speichern(todos)
+@app.route("/done/<int:todo_id>")
+def done(todo_id):
+    conn = get_connection()
+    conn.execute("UPDATE todos SET erledigt = 1 WHERE id = ?", (todo_id,))
+    conn.commit()
+    conn.close()
     return redirect("/")
 
-@app.route("/delete/<int:index>")
-def delete(index):
-    todos = laden()
-    if 0 <= index < len(todos):
-        todos.pop(index)
-        speichern(todos)
+@app.route("/delete/<int:todo_id>")
+def delete(todo_id):
+    conn = get_connection()
+    conn.execute("DELETE FROM todos WHERE id = ?", (todo_id,))
+    conn.commit()
+    conn.close()
     return redirect("/")
 
 if __name__ == "__main__":
+    init_db()
     app.run(debug=True)
